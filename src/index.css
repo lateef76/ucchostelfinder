@@ -1,1 +1,72 @@
 @import "tailwindcss";
+
+/* 1. Import Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* 2. Your Theme (Colors, Fonts, Spacing) */
+@theme {
+  --color-ucc-blue: #0a2472;
+  --color-ucc-gold: #f4c430;
+  --color-ucc-gray: #4a5568;
+
+  --font-sans: "Inter", "system-ui", "-apple-system", "sans-serif";
+  --spacing-touch: 44px;
+}
+
+/* 3. Global Base Styles (Replaces @layer base) */
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+    @apply antialiased;
+  }
+  
+  body {
+    @apply bg-gray-50 text-gray-900 font-sans;
+  }
+
+  /* Critical for iOS accessibility and preventing "zoom-on-focus" */
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+
+  /* Mobile Touch Targets */
+  button, [role="button"], a {
+    @apply cursor-pointer;
+    min-height: var(--spacing-touch);
+    min-width: var(--spacing-touch);
+  }
+
+  button {
+    @apply bg-none border-0 p-0;
+  }
+}
+
+/* 4. Component Classes (Replaces @layer components) */
+@utility mobile-container {
+  @apply px-4 mx-auto max-w-7xl;
+}
+
+@utility bottom-sheet {
+  @apply fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-lg transform translate-y-full transition-transform duration-300;
+  
+  &.open {
+    @apply translate-y-0;
+  }
+}
+
+@utility hostel-card {
+  @apply bg-white rounded-lg shadow-sm active:bg-gray-50 transition-colors border border-gray-200;
+}
+
+@utility skeleton {
+  @apply animate-pulse bg-gray-200 rounded;
+}
+
+/* 5. Utility Classes (Replaces @layer utilities) */
+@utility hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

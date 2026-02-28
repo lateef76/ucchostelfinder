@@ -231,3 +231,47 @@ export interface ApiResponse<T> {
   error?: string;
   message?: string;
 }
+// ==================== Map Types ====================
+
+export interface MapBounds {
+  north: number;
+  south: number;
+  east: number;
+  west: number;
+}
+
+export interface MapViewport {
+  center: [number, number]; // [latitude, longitude]
+  zoom: number;
+  bounds?: MapBounds;
+}
+
+// UCC Campus locations (for reference)
+export const UCC_LOCATIONS = {
+  'science': { lat: 5.1167, lng: -1.2833, name: 'Science' },
+  'north-campus': { lat: 5.1200, lng: -1.2800, name: 'North Campus' },
+  'south-campus': { lat: 5.1130, lng: -1.2860, name: 'South Campus' },
+  'atlantic-hall': { lat: 5.1150, lng: -1.2850, name: 'Atlantic Hall' },
+  'african-hall': { lat: 5.1170, lng: -1.2820, name: 'African Hall' },
+  'casford': { lat: 5.1180, lng: -1.2810, name: 'Casford' },
+  'valco': { lat: 5.1140, lng: -1.2840, name: 'Valco Trust' },
+  'business-school': { lat: 5.1160, lng: -1.2825, name: 'Business School' },
+  'medical-school': { lat: 5.1190, lng: -1.2780, name: 'Medical School' },
+  'main-gate': { lat: 5.1155, lng: -1.2835, name: 'Main Gate' },
+};
+
+export type UCCLocationKey = keyof typeof UCC_LOCATIONS;
+
+// Hostel marker for map
+export interface HostelMarker extends Hostel {
+  distance?: number; // Distance from user in km
+  clusterId?: string; // For marker clustering
+}
+
+// User location
+export interface UserLocation {
+  lat: number;
+  lng: number;
+  accuracy?: number;
+  timestamp: number;
+}

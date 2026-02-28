@@ -1,4 +1,5 @@
-// ...existing code...
+import React from "react";
+import ReactDOM from "react-dom";
 import {
   BrowserRouter as Router,
   Routes,
@@ -10,6 +11,25 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import { FaHome } from "react-icons/fa";
+import { FaSignOutAlt } from "react-icons/fa";
+
+// Modal component using React Portal
+function Modal({
+  open,
+  children,
+}: {
+  open: boolean;
+  children: React.ReactNode;
+}) {
+  if (!open) return null;
+  return ReactDOM.createPortal(
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-transparent backdrop-blur-[2px] pointer-events-none">
+      <div className="pointer-events-auto">{children}</div>
+    </div>,
+    document.body,
+  );
+}
 
 function App() {
   const { user, loading } = useAuth();
@@ -53,9 +73,24 @@ function Home() {
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
       <header className="w-full py-6 bg-white shadow">
         <div className="container mx-auto px-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-ucc-blue">
-            UCC Hostel Finder
-          </h1>
+          <a
+            href="/"
+            className="flex items-center gap-1 group focus:outline-none align-middle"
+            title="Go to Home Page"
+          >
+            <span className="inline-block text-ucc-blue drop-shadow-md align-middle text-3xl">
+              <FaHome className="inline-block mr-0 text-ucc-blue drop-shadow-md text-3xl" />
+            </span>
+              <span
+                className="font-extrabold text-transparent bg-clip-text bg-linear-to-r from-ucc-blue via-blue-400 to-blue-700 text-3xl font-sans drop-shadow-sm transition-all duration-500 animate-fade-in align-middle relative"
+              style={{
+                fontFamily: "Poppins, Inter, Arial, sans-serif",
+                top: "2px",
+              }}
+            >
+              UHF
+            </span>
+          </a>
           <div>
             <a
               href="/login"
@@ -102,25 +137,81 @@ function Home() {
 
 function Dashboard() {
   const { user, logout } = useAuth();
+  const [showConfirm, setShowConfirm] = React.useState(false);
+
+  const handleLogoutClick = () => {
+    setShowConfirm(true);
+  };
+
+  const confirmLogout = () => {
+    setShowConfirm(false);
+    logout();
+  };
+
+  const cancelLogout = () => {
+    setShowConfirm(false);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Logout Confirmation Modal using Portal */}
+      <Modal open={showConfirm}>
+        <div className="bg-white rounded-lg shadow-lg p-6 w-11/12 max-w-xs sm:max-w-sm mx-auto animate-fade-in flex flex-col items-center">
+          <div className="text-base font-semibold mb-3 text-gray-800 text-center">
+            Are you sure you want to log out?
+          </div>
+          <div className="flex gap-2 w-full mt-2">
+            <button
+              onClick={confirmLogout}
+              className="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 rounded"
+            >
+              Yes, Log Out
+            </button>
+            <button
+              onClick={cancelLogout}
+              className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 rounded"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </Modal>
       <header className="bg-white shadow-sm">
         <div className="mobile-container py-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-xl font-bold text-ucc-blue">
-              UCC Hostel Finder
-            </h1>
-            <div className="relative">
-              <button
-                onClick={logout}
-                className="flex items-center space-x-2 bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-lg transition-colors touch-manipulation"
+            <a
+              href="/"
+              className="flex items-center gap-1 group focus:outline-none align-middle"
+              title="Go to Home Page"
+            >
+              <span className="inline-block text-ucc-blue drop-shadow-md align-middle text-3xl">
+                <FaHome className="inline-block mr-0 text-ucc-blue drop-shadow-md text-3xl" />
+              </span>
+                <span
+                  className="font-extrabold text-transparent bg-clip-text bg-linear-to-r from-ucc-blue via-blue-400 to-blue-700 text-3xl font-sans drop-shadow-sm transition-all duration-500 animate-fade-in align-middle relative"
+                style={{
+                  fontFamily: "Poppins, Inter, Arial, sans-serif",
+                  top: "2px",
+                }}
               >
+                UHF
+              </span>
+            </a>
+            <div className="flex items-center gap-2">
+              <div className="relative flex items-center space-x-2 bg-gray-100 px-3 py-2 rounded-lg">
                 <span className="text-sm font-medium">
                   {user?.displayName || "User"}
                 </span>
                 <div className="w-8 h-8 bg-ucc-blue rounded-full flex items-center justify-center text-white">
                   {user?.displayName?.charAt(0) || "U"}
                 </div>
+              </div>
+              <button
+                onClick={handleLogoutClick}
+                className="ml-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2 text-base sm:text-lg"
+              >
+                <FaSignOutAlt className="text-lg" />
+                <span className="hidden xs:inline">Logout</span>
               </button>
             </div>
           </div>
@@ -139,5 +230,16 @@ function Dashboard() {
     </div>
   );
 }
+
+// Add keyframes for fade-in animation if not present
+<style>{`
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fade-in 0.8s ease;
+}
+`}</style>;
 
 export default App;

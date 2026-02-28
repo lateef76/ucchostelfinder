@@ -1,7 +1,7 @@
 import { useAuth } from "./hooks/useAuth";
 import { useState } from "react";
+
 import loginImage from "./assets/login-image.jpg";
-// Add a modern font (e.g., Inter) via CDN in index.html for best effect, or use Tailwind's font-sans
 
 function App() {
   const { user, loading, login, signup, logout } = useAuth();
@@ -25,43 +25,39 @@ function App() {
   // Show auth screen if not logged in
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-200 via-blue-100 to-blue-300 p-0 md:p-4 font-sans">
-        <div className="flex w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden flex-col md:flex-row">
-          {/* Left image section (hidden on mobile) */}
-          <div className="hidden md:block md:w-1/2 relative min-h-100">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <div className="w-full max-w-md md:max-w-3xl flex flex-col md:flex-row bg-white rounded-2xl shadow-lg overflow-hidden">
+          {/* Left image section (desktop only) */}
+          <div className="hidden md:block md:w-1/2 relative">
             <img
               src={loginImage}
               alt="Hostel background"
-              className="object-cover w-full h-full min-h-100 max-h-175"
-              style={{ minHeight: 400, maxHeight: 700 }}
+              className="object-cover w-full h-full"
+              style={{ minHeight: 400, maxHeight: 600 }}
             />
-            {/* Optional: Use a subtle gradient overlay for better readability */}
-            <div className="absolute inset-0 bg-linear-to-br from-ucc-blue/30 to-transparent" />
           </div>
           {/* Form section */}
-          <div className="w-full md:w-1/2 flex flex-col justify-center p-8 md:p-12 bg-linear-to-br from-white/90 via-blue-50/80 to-blue-100/80">
-            <div className="mb-8 text-center">
-              <h1
-                className="text-3xl md:text-4xl font-extrabold text-blue-900 mb-2 tracking-tight"
-                style={{ fontFamily: "Inter, sans-serif" }}
-              >
+          <div
+            className="w-full md:w-1/2 flex flex-col justify-center p-6"
+            style={{ fontFamily: "Inter, sans-serif" }}
+          >
+            {/* Header */}
+            <div className="text-center mb-8">
+              <h1 className="text-3xl font-bold text-ucc-blue mb-2">
                 UCC Hostel Finder
               </h1>
-              <p
-                className="text-gray-700 text-base md:text-lg font-medium"
-                style={{ fontFamily: "Inter, sans-serif" }}
-              >
+              <p className="text-gray-600">
                 Find your perfect student accommodation
               </p>
             </div>
+
             {/* Auth Card */}
-            <div>
-              <h2
-                className="text-2xl font-bold text-blue-800 mb-6 text-center tracking-tight"
-                style={{ fontFamily: "Inter, sans-serif" }}
-              >
+            <div className="bg-white rounded-2xl shadow-lg p-6">
+              <h2 className="text-2xl font-semibold text-gray-800 mb-6">
                 {isLoginView ? "Welcome Back" : "Create Account"}
               </h2>
+
+              {/* Form */}
               <form
                 onSubmit={async (e) => {
                   e.preventDefault();
@@ -71,7 +67,7 @@ function App() {
                     await signup(email, password, name);
                   }
                 }}
-                className="space-y-5"
+                className="space-y-4"
               >
                 {/* Name field - only for signup */}
                 {!isLoginView && (
@@ -90,6 +86,7 @@ function App() {
                     />
                   </div>
                 )}
+
                 {/* Email field */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -104,6 +101,7 @@ function App() {
                     required
                   />
                 </div>
+
                 {/* Password field */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -122,14 +120,16 @@ function App() {
                     Minimum 6 characters
                   </p>
                 </div>
+
                 {/* Submit button */}
                 <button
                   type="submit"
-                  className="w-full bg-ucc-blue text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-900 transition-colors touch-manipulation shadow-md"
+                  className="w-full bg-ucc-blue text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-900 transition-colors touch-manipulation"
                 >
                   {isLoginView ? "Sign In" : "Create Account"}
                 </button>
               </form>
+
               {/* Toggle between login/signup */}
               <div className="mt-6 text-center">
                 <button
@@ -142,11 +142,9 @@ function App() {
                 </button>
               </div>
             </div>
+
             {/* UCC Note */}
-            <p
-              className="text-xs text-gray-500 text-center mt-6"
-              style={{ fontFamily: "Inter, sans-serif" }}
-            >
+            <p className="text-xs text-gray-500 text-center mt-6">
               Use your UCC email for student verification
             </p>
           </div>

@@ -17,7 +17,7 @@ import {
   updateProfile,
 } from 'firebase/auth';
 import type { User } from 'firebase/auth';
-import { auth } from '../lib/firebase';
+import { auth } from '../lib/firebaseApp';
 import toast from 'react-hot-toast'; // We'll install this later
 
 interface AuthState {

@@ -5,7 +5,6 @@ import App from "./App";
 import "./index.css";
 
 // Detect if user is on mobile for any initial setup
-const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
 // Set viewport height fix for mobile browsers (address bar issues)
 const setVhVariable = () => {

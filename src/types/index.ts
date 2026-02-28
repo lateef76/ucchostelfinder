@@ -1,9 +1,12 @@
 // ==================== User Types ====================
 
+export type UserRole = 'admin' | 'user' | 'manager';
+
 export interface User {
   id: string;
   email: string;
   name: string;
+  role: UserRole;
   studentId?: string;
   yearOfStudy?: 1 | 2 | 3 | 4 | 5 | 6; // UCC programs vary in length
   gender?: 'male' | 'female' | 'other' | 'prefer-not-to-say';

@@ -39,18 +39,23 @@ import {
   signInWithPopup,
   confirmPasswordReset as firebaseConfirmPasswordReset,
 } from 'firebase/auth';
-import type { User } from 'firebase/auth';
+import type { User as FirebaseUser } from 'firebase/auth';
+import { userService } from '../lib/firebase';
+import type { User as AppUser, UserRole } from '../types';
 import { auth } from '../lib/firebaseApp';
 import toast from 'react-hot-toast';
 
 interface AuthState {
-  user: User | null;
+  firebaseUser: FirebaseUser | null;
+  user: AppUser | null;
   loading: boolean;
   error: string | null;
 }
 
+
 export function useAuth() {
   const [state, setState] = useState<AuthState>({
+    firebaseUser: null,
     user: null,
     loading: true,
     error: null,
@@ -59,8 +64,16 @@ export function useAuth() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(
       auth,
-      (user) => setState({ user, loading: false, error: null }),
-      (error) => setState({ user: null, loading: false, error: error.message })
+      async (firebaseUser) => {
+        if (firebaseUser) {
+          // Fetch user profile from Firestore
+          const profile = await userService.getUserProfile(firebaseUser.uid);
+          setState({ firebaseUser, user: profile, loading: false, error: null });
+        } else {
+          setState({ firebaseUser: null, user: null, loading: false, error: null });
+        }
+      },
+      (error) => setState({ firebaseUser: null, user: null, loading: false, error: error.message })
     );
     return unsubscribe;
   }, []);
@@ -69,6 +82,9 @@ export function useAuth() {
     try {
       setState((prev) => ({ ...prev, loading: true, error: null }));
       const result = await signInWithEmailAndPassword(auth, email, password);
+      // Fetch user profile from Firestore
+      const profile = await userService.getUserProfile(result.user.uid);
+      setState((prev) => ({ ...prev, firebaseUser: result.user, user: profile, loading: false }));
       toast.success('Welcome back! 👋');
       return result.user;
     } catch (error) {
@@ -82,12 +98,40 @@ export function useAuth() {
     }
   }
 
-  async function signup(email: string, password: string, displayName: string) {
+  async function signup(email: string, password: string, displayName: string, role: UserRole) {
     try {
       setState((prev) => ({ ...prev, loading: true, error: null }));
       const result = await createUserWithEmailAndPassword(auth, email, password);
       if (result.user) {
         await updateProfile(result.user, { displayName });
+        // Save user profile with role in Firestore
+        await userService.setUserProfile(result.user.uid, {
+          id: result.user.uid,
+          email,
+          name: displayName,
+          role: role as import("../types").UserRole,
+          createdAt: new Date(),
+          lastLogin: new Date(),
+          favoriteCount: 0,
+          reviewCount: 0,
+          settings: {
+            notifications: {
+              email: true,
+              push: true,
+              reviews: true,
+              favorites: true,
+            },
+            privacy: {
+              showProfile: true,
+              showReviews: true,
+              showFavorites: true,
+            },
+            theme: 'light',
+          },
+        });
+        // Fetch user profile after creation
+        const profile = await userService.getUserProfile(result.user.uid);
+        setState((prev) => ({ ...prev, firebaseUser: result.user, user: profile, loading: false }));
         toast.success('Account created successfully! 🎉');
       }
       return result.user;
@@ -159,6 +203,7 @@ export function useAuth() {
 
   return {
     user: state.user,
+    firebaseUser: state.firebaseUser,
     loading: state.loading,
     error: state.error,
     login,

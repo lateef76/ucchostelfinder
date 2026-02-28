@@ -59,6 +59,8 @@ const Signup: React.FC = () => {
   const [showPasswordInfo, setShowPasswordInfo] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState("");
   const [terms, setTerms] = useState(false);
+  // role is always 'user' for signup
+  const role = "user";
   const [formError, setFormError] = useState<string | null>(null);
   const [yupErrors, setYupErrors] = useState<{ [key: string]: string }>({});
   const [touched, setTouched] = useState({
@@ -88,7 +90,7 @@ const Signup: React.FC = () => {
       }
     }
     try {
-      await signup(email, password, name);
+      await signup(email, password, name, role);
       navigate("/dashboard");
     } catch {
       setFormError("Signup failed. Please check your details.");

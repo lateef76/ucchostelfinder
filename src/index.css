@@ -1,8 +1,4 @@
 @import "tailwindcss";
-
-/* 1. Import Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
 /* 2. Your Theme (Colors, Fonts, Spacing) */
 @theme {
   --color-ucc-blue: #0a2472;

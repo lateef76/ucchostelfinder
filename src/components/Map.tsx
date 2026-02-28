@@ -327,10 +327,7 @@ export const Map: React.FC<MapProps> = ({
         <TileLayer {...TILE_LAYER} />
 
         {/* Map Controller */}
-        <MapController
-          selectedHostelId={selectedHostelId}
-          hostels={hostels}
-        />
+        <MapController selectedHostelId={selectedHostelId} hostels={hostels} />
 
         {/* Map Events */}
         <MapEvents onMapMove={onMapMove} />

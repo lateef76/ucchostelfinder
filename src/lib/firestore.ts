@@ -27,12 +27,19 @@ export interface ReviewService {
 	onReviewsChange: (hostelId: string, callback: (reviews: Review[]) => void) => () => void;
 	addReview: (hostelId: string, userId: string, reviewData: Partial<Review>) => Promise<void>;
 	markHelpful: (reviewId: string, hostelId: string) => Promise<void>;
-}
-export const reviewService: ReviewService = {
-	onReviewsChange: () => () => {},
-	addReview: async () => {},
-	markHelpful: async () => {},
-};
+	getHostelReviews: (
+		hostelId: string,
+		options?: { limit?: number; lastVisible?: QueryDocumentSnapshot | null }
+	) => Promise<{ reviews: Review[]; lastVisible: QueryDocumentSnapshot | null }>;
+	}
+
+	export const reviewService: ReviewService = {
+		onReviewsChange: () => () => {},
+		addReview: async () => {},
+		markHelpful: async () => {},
+		getHostelReviews: async () => ({ reviews: [], lastVisible: null }),
+	};
+
 
 // FAVORITE SERVICE
 export interface FavoriteService {

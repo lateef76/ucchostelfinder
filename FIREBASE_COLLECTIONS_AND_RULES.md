@@ -132,65 +132,15 @@
 
 ---
 
-## Firestore Security Rules (Sample)
+## Firestore Security Rules (Recommended for Your App)
 
-```js
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Users: Only user or admin can read/update their profile
+    // Users: Only user or admin can read/update their profile. Only user can create their own profile.
     match /users/{userId} {
+      allow create: if request.auth != null && request.auth.uid == userId;
       allow read, update: if request.auth != null && (request.auth.uid == userId || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
-      allow create: if request.auth != null;
-      allow delete: if false;
-    }
-
-    // Hostels: Admins and managers can create/update, anyone can read
-    match /hostels/{hostelId} {
-      allow read: if true;
-      allow create, update, delete: if request.auth != null && (
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'manager']
-      );
-    }
-
-    // Bookings: Only authenticated users can create, read their own; admins/managers can read all
-    match /bookings/{bookingId} {
-      allow create: if request.auth != null;
-      allow read: if request.auth != null && (
-        resource.data.userId == request.auth.uid || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'manager']
-      );
-      allow update, delete: if request.auth != null && (
-        resource.data.userId == request.auth.uid || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'manager']
-      );
-    }
-
-    // Favorites: Only user can create/read/delete their own
-    match /favorites/{favoriteId} {
-      allow create, read, delete: if request.auth != null && resource.data.userId == request.auth.uid;
-    }
-
-    // Reviews: Only authenticated users can create, update/delete their own
-    match /reviews/{reviewId} {
-      allow create: if request.auth != null;
-      allow read: if true;
-      allow update, delete: if request.auth != null && resource.data.userId == request.auth.uid;
-    }
-  }
-}
-```
-
----
-
-## Firestore Security Rules (Advanced)
-
-```js
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    // Users: Only user or admin can read/update their profile
-    match /users/{userId} {
-      allow read, update: if request.auth != null && (request.auth.uid == userId || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
-      allow create: if request.auth != null;
       allow delete: if false;
     }
 
@@ -264,12 +214,11 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
-    // Announcements: Anyone can read, only admin can create
+    // Announcements: Anyone can read, only admin can create/update/delete
     match /announcements/{announcementId} {
       allow create: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
       allow read: if true;
-      allow update, delete: if request.auth != null &&
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      allow update, delete: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 
     // Reports: Only reporter and admin can read, only admin can update/close
@@ -280,4 +229,3 @@ service cloud.firestore {
     }
   }
 }
-```

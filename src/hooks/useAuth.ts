@@ -68,7 +68,11 @@ export function useAuth() {
         if (firebaseUser) {
           // Fetch user profile from Firestore
           const profile = await userService.getUserProfile(firebaseUser.uid);
-          setState({ firebaseUser, user: profile, loading: false, error: null });
+          if (!profile) {
+            setState({ firebaseUser, user: null, loading: false, error: 'User profile not found. Please contact support or try logging out.' });
+          } else {
+            setState({ firebaseUser, user: profile, loading: false, error: null });
+          }
         } else {
           setState({ firebaseUser: null, user: null, loading: false, error: null });
         }
@@ -164,6 +168,36 @@ export function useAuth() {
       setState((prev) => ({ ...prev, loading: true, error: null }));
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
+      let profile = await userService.getUserProfile(result.user.uid);
+      if (!profile) {
+        // Create user profile with default role 'user'
+        await userService.setUserProfile(result.user.uid, {
+          id: result.user.uid,
+          email: result.user.email || '',
+          name: result.user.displayName || '',
+          role: 'user',
+          createdAt: new Date(),
+          lastLogin: new Date(),
+          favoriteCount: 0,
+          reviewCount: 0,
+          settings: {
+            notifications: {
+              email: true,
+              push: true,
+              reviews: true,
+              favorites: true,
+            },
+            privacy: {
+              showProfile: true,
+              showReviews: true,
+              showFavorites: true,
+            },
+            theme: 'light',
+          },
+        });
+        profile = await userService.getUserProfile(result.user.uid);
+      }
+      setState((prev) => ({ ...prev, firebaseUser: result.user, user: profile, loading: false }));
       toast.success('Signed in with Google!');
       return result.user;
     } catch (error) {

@@ -1,6 +1,10 @@
-
 // import React from "react"; // Not needed with React 17+ JSX transform
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import { useAuth } from "./hooks/useAuth";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -9,7 +13,9 @@ import ResetPassword from "./pages/ResetPassword";
 import AdminDashboard from "./pages/AdminDashboard";
 import ManagerDashboard from "./pages/ManagerDashboard";
 import UserDashboard from "./pages/UserDashboard";
-
+import AdminUserList from "./pages/AdminUserList";
+import AdminHostels from "./pages/AdminHostels";
+import AdminSettings from "./pages/AdminSettings";
 
 function App() {
   const { user, loading } = useAuth();
@@ -41,6 +47,10 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/dashboard" element={getDashboard()} />
+        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/admin/users" element={<AdminUserList />} />
+        <Route path="/admin/hostels" element={<AdminHostels />} />
+        <Route path="/admin/settings" element={<AdminSettings />} />
       </Routes>
     </Router>
   );

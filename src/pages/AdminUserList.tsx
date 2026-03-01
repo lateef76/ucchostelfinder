@@ -8,6 +8,22 @@ const AdminUserList: React.FC = () => {
   type User = { name: string; email: string; role: string };
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [roleEdits, setRoleEdits] = useState<{ [email: string]: string }>({});
+
+  const handleRoleChange = (email: string, newRole: string) => {
+    setRoleEdits((prev) => ({ ...prev, [email]: newRole }));
+  };
+
+  const handleRoleSave = (user: User) => {
+    // Here you would call your backend to update the role
+    // For now, just close the edit state
+    setRoleEdits((prev) => {
+      const copy = { ...prev };
+      delete copy[user.email];
+      return copy;
+    });
+    // Optionally show a toast/notification
+  };
 
   const handleEdit = (user: User) => {
     setSelectedUser(user);
@@ -68,31 +84,45 @@ const AdminUserList: React.FC = () => {
                 </thead>
                 <tbody>
                   {/* Example row */}
-                  {users.map((user, idx) => (
-                    <tr
-                      key={idx}
-                      className="border-t hover:bg-yellow-50 transition"
-                    >
-                      <td className="px-4 py-3 font-medium text-gray-800">
-                        {user.name}
-                      </td>
-                      <td className="px-4 py-3 text-gray-600">{user.email}</td>
-                      <td className="px-4 py-3">
-                        <span className="inline-block px-2 py-1 rounded bg-yellow-100 text-yellow-800 text-xs font-semibold">
-                          {user.role}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3">
-                        <button
-                          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-yellow-400 text-white font-semibold shadow hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-300 transition"
-                          onClick={() => handleEdit(user)}
-                        >
-                          <FaEdit className="text-base" />
-                          <span className="hidden sm:inline">Edit</span>
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
+                  {users.map((user, idx) => {
+                    const editingRole = roleEdits[user.email] ?? user.role;
+                    return (
+                      <tr key={idx} className="border-t hover:bg-yellow-50 transition">
+                        <td className="px-4 py-3 font-medium text-gray-800">{user.name}</td>
+                        <td className="px-4 py-3 text-gray-600">{user.email}</td>
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-2">
+                            <select
+                              className="px-2 py-1 rounded border border-gray-200 bg-white text-xs font-semibold text-yellow-800 focus:outline-none focus:ring-2 focus:ring-yellow-300"
+                              value={editingRole}
+                              onChange={(e) => handleRoleChange(user.email, e.target.value)}
+                            >
+                              <option value="Admin">Admin</option>
+                              <option value="Manager">Manager</option>
+                              <option value="User">User</option>
+                            </select>
+                            {roleEdits[user.email] && (
+                              <button
+                                className="ml-2 px-2 py-1 rounded bg-yellow-400 text-white text-xs font-semibold hover:bg-yellow-500 transition"
+                                onClick={() => handleRoleSave(user)}
+                              >
+                                Save
+                              </button>
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-4 py-3">
+                          <button
+                            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-yellow-400 text-white font-semibold shadow hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-300 transition"
+                            onClick={() => handleEdit(user)}
+                          >
+                            <FaEdit className="text-base" />
+                            <span className="hidden sm:inline">Edit</span>
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
                   {/* Edit Modal (placeholder) */}
                   {editModalOpen && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">

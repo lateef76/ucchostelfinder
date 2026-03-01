@@ -3,8 +3,8 @@
 This checklist covers all major features and components not yet implemented, based on your current Firestore schema and advanced app goals.
 
 ## 1. Admin Features
-- [ ] User management UI (view, search, edit, delete users)
-- [ ] Role assignment UI (promote/demote users)
+- [0] User management UI (view, search, edit, delete users)
+- [0 ] Role assignment UI (promote/demote users)
 - [ ] Hostel approval/review UI
 - [ ] Platform settings UI (analytics, reports, app-wide settings)
 - [ ] Announcements management (create, edit, delete)

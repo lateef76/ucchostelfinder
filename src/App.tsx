@@ -1,3 +1,4 @@
+import PlatformSettingsMobile from "./pages/PlatformSettingsMobile";
 // import React from "react"; // Not needed with React 17+ JSX transform
 import {
   BrowserRouter as Router,
@@ -15,7 +16,9 @@ import ManagerDashboard from "./pages/ManagerDashboard";
 import UserDashboard from "./pages/UserDashboard";
 import AdminUserList from "./pages/AdminUserList";
 import AdminHostels from "./pages/AdminHostels";
+
 import AdminSettings from "./pages/AdminSettings";
+import HostelApprovalMobile from "./pages/HostelApprovalMobile";
 
 function App() {
   const { user, loading } = useAuth();
@@ -51,6 +54,14 @@ function App() {
         <Route path="/admin/users" element={<AdminUserList />} />
         <Route path="/admin/hostels" element={<AdminHostels />} />
         <Route path="/admin/settings" element={<AdminSettings />} />
+        <Route
+          path="/admin/platform-settings"
+          element={<PlatformSettingsMobile />}
+        />
+        <Route
+          path="/admin/hostel-approval"
+          element={<HostelApprovalMobile />}
+        />
       </Routes>
     </Router>
   );
